@@ -3,9 +3,12 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "helpers/buffer.h"
 #include "helpers/vector.h"
+
+#define S_EQ(str, str2) (str && str2 && (strcmp(str, str2) == 0))
 
 struct pos {
   int line;
@@ -24,6 +27,25 @@ struct pos {
   case '7':                                                                    \
   case '8':                                                                    \
   case '9'
+
+#define OPERATOR_CASE_EXPLUDING_DEIVISION                                      \
+  case '+':                                                                    \
+  case '-':                                                                    \
+  case '*':                                                                    \
+  case '>':                                                                    \
+  case '<':                                                                    \
+  case '^':                                                                    \
+  case '%':                                                                    \
+  case '!':                                                                    \
+  case '=':                                                                    \
+  case '~':                                                                    \
+  case '|':                                                                    \
+  case '&':                                                                    \
+  case '(':                                                                    \
+  case '[':                                                                    \
+  case ',':                                                                    \
+  case '.':                                                                    \
+  case '?'
 
 enum {
   TOKEN_TYPE_IDENTIFIER,
@@ -113,5 +135,7 @@ void lex_process_free(struct lex_process *process);
 void *lex_process_private(struct lex_process *process);
 struct vector *lex_process_tokens(struct lex_process *process);
 int lex(struct lex_process *process);
+
+bool token_is_keyword(struct token *token, const char *value);
 
 #endif
