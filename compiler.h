@@ -13,6 +13,18 @@ struct pos {
   const char *filename;
 };
 
+#define NUMERIC_CASE                                                           \
+  case '0':                                                                    \
+  case '1':                                                                    \
+  case '2':                                                                    \
+  case '3':                                                                    \
+  case '4':                                                                    \
+  case '5':                                                                    \
+  case '6':                                                                    \
+  case '7':                                                                    \
+  case '8':                                                                    \
+  case '9'
+
 enum {
   TOKEN_TYPE_IDENTIFIER,
   TOKEN_TYPE_KEYWORD,
@@ -20,7 +32,8 @@ enum {
   TOKEN_TYPE_SYMBOL,
   TOKEN_TYPE_STRING,
   TOKEN_TYPE_COMMENT,
-  TOKEN_TYPE_NEWLINE
+  TOKEN_TYPE_NEWLINE,
+  TOKEN_TYPE_NUMBER
 };
 
 enum {
@@ -31,6 +44,7 @@ enum {
 struct token {
   int type;
   int flags;
+  struct pos pos;
   union {
     char cval;
     const char *sval;
@@ -86,18 +100,18 @@ int compile_file(const char *filename, const char *out_file, int flags);
 struct compile_process *compile_process_create(const char *filename,
                                                const char *filename_out,
                                                int flags);
-
 char compile_process_next_char(struct lex_process *lex_process);
 char compile_process_peek_char(struct lex_process *lex_process);
 char compile_process_push_char(struct lex_process *lex_process, char c);
 
+void compiler_error(struct compile_process *compiler, const char *msg, ...);
+void compiler_warning(struct compile_process *compiler, const char *msg, ...);
 struct lex_process *lex_process_create(struct compile_process *compiler,
                                        struct lex_process_functions *functions,
                                        void *private);
 void lex_process_free(struct lex_process *process);
 void *lex_process_private(struct lex_process *process);
 struct vector *lex_process_tokens(struct lex_process *process);
-
 int lex(struct lex_process *process);
 
 #endif
